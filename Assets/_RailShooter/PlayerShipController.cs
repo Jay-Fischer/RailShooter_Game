@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerShipController : MonoBehaviour
@@ -10,7 +11,17 @@ public class PlayerShipController : MonoBehaviour
     public float tiltAngle = 30;
     Vector3 tilting;
 
+    [Header("Shooting")]
+    public Rigidbody playerProjectilie;
+    public Transform[] ShotSpawns;
+    public bool canShoot;
+
     public bool isInverted;
+
+    private void Start()
+    {
+        canShoot = true;
+    }
 
     [Header("Clamping")]
     public float xMin;
@@ -20,10 +31,35 @@ public class PlayerShipController : MonoBehaviour
 
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+
         HandleTilting();
+
+        if (Input.GetKeyDown(KeyCode.Space) && canShoot)
+        {
+            canShoot = false;
+            Rigidbody _shot;
+            foreach (Transform t in ShotSpawns) 
+            {
+                _shot = Instantiate(playerProjectilie, t.position, t.rotation) as Rigidbody;
+                _shot.AddForce(t.forward * 500);
+            }
+            StartCoroutine(resetShot());
+        }
     }
+
+    IEnumerator resetShot()
+    {
+        yield return new WaitForSeconds(0.25f);
+        canShoot = true;
+    }
+
 
     private void FixedUpdate()
     {
