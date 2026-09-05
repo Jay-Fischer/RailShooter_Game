@@ -50,6 +50,7 @@ public class PlayerShipController : MonoBehaviour
                 _shot = Instantiate(playerProjectilie, t.position, t.rotation) as Rigidbody;
                 _shot.AddForce(t.forward * 500);
             }
+            SoundManager.Instance.PlaySound2D("Weapon");
             StartCoroutine(resetShot());
         }
     }
